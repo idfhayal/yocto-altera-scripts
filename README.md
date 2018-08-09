@@ -1,1 +1,1 @@
-yocto-altera-scripts
+Yocto build scripts for Altera CycloneV SoC
