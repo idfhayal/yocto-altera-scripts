@@ -7,21 +7,24 @@ yellow='\E[1;33m'
 NC='\033[0m'
 
 echo -e "${yellow}Installing Yocto Rocko source for Altera-SoC...${NC}"
-cd ~
+echo -e "${yellow}Enter main directory name...${NC}"
+read mainDir
 echo -e "${yellow}Downloading Yocto source...${NC}"
-git clone -b rocko git://git.yoctoproject.org/poky.git poky
-cd poky
+git clone -b rocko git://git.yoctoproject.org/poky.git ${mainDir}
+cd ${mainDir}
 echo -e "${yellow}Downloading meta-altera...${NC}"
 git clone -b rocko git://github.com/kraj/meta-altera.git
 echo -e "${yellow}Downloading meta-linaro...${NC}"
 git clone -b rocko git://git.linaro.org/openembedded/meta-linaro.git
 
 echo -e "${yellow}Setting up environment...${NC}"
-source oe-init-build-env build
+echo -e "${yellow}Enter main directory name...${NC}"
+read buildDir
+source oe-init-build-env ${buildDir} #ToDo build directory from argument
 
 echo -e "${yellow}Backup and edit local.conf...${NC}"
-\cp conf/local.conf conf/local.conf.original
-\cp conf/bblayers.conf conf/bblayers.conf.original
+\cp conf/local.conf conf/local.conf.sample
+\cp conf/bblayers.conf conf/bblayers.conf.sample
 echo " " >> conf/local.conf #append to file
 echo "#" >> conf/local.conf
 echo "# Custom configuration" >> conf/local.conf
@@ -35,9 +38,8 @@ echo -e "${yellow}Patching Linaro Toolchain...${NC}"
 echo "TARGET_CC_ARCH += "'"${LDFLAGS}"'"" >> ../meta-linaro/meta-linaro-toolchain/recipes-devtools/gcc/libgcc_linaro-5.2.bb
 
 echo -e "${yellow}Creating custom BSP...${NC}"
-cd ~/poky
-yocto-layer create cyclone-custom-bsp
-#bitbake-layers create-layer ../meta-cyclone-custom-bsp
+cd ..
+bitbake-layers create-layer cyclone-custom-bsp #ToDo layer directory from argument
 cd meta-cyclone-custom-bsp
 
 echo -e "${yellow}Creating custom target Machine...${NC}"
