@@ -6,16 +6,16 @@
 yellow='\E[1;33m'
 NC='\033[0m'
 
-if [ $# -eq 0 ]
-then
-  sudo lsblk
-  echo -e "${yellow}Please provide a drive name:${NC}"
-  read prt
-  echo -e "${yellow}Please provide an image name:${NC}"
-  read img
-else
-  prt=${1}
-fi
+# if [ $# -eq 0 ]
+# then
+sudo lsblk
+echo -e "${yellow}Please provide a drive name:${NC}"
+read prt
+echo -e "${yellow}Please provide an image name:${NC}"
+read img
+# else
+#   prt=${1}
+# fi
 
 
 echo -e "${yellow}Creating Yocto image for Altera-SoC...${NC}"

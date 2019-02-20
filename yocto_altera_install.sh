@@ -1,7 +1,9 @@
 #!/bi/sh - run in shell
 #
-# Building Yocto for Altera Cyclone5 Soc
+# Building Yocto for Altera Cyclone5 SoC
+# Author: Alex Sh
 # Usage: source yocto_altera_install
+
 
 yellow='\E[1;33m'
 NC='\033[0m'
