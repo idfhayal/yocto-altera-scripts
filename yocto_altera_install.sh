@@ -12,6 +12,7 @@ NC='\033[0m'
 url="git://git.yoctoproject.org/poky.git"
 url_altera="git://github.com/kraj/meta-altera.git"
 url_toolchain="git://git.linaro.org/openembedded/meta-linaro.git"
+source_dir="altera_source"
 
 ### Functions #############################################################
 function download
@@ -26,22 +27,35 @@ function download
   # read mainDir
   mainDir="yocto-${branch}"
   # fullProjectDir=.../${mainDir}
+  
+  # Download Yocto source
   echo -e "${yellow}Downloading Yocto ${branch} source...${NC}"
   git clone -b ${branch} ${url} ${mainDir}
   cd ${mainDir} # fullProjectDir=.../${mainDir}
+  
+  mkdir ${source_dir}
+  pushd ${source_dir}
+
+  # Download Altera BSP
   echo -e "${yellow}Downloading meta-altera...${NC}"
   git clone -b ${branch} ${url_altera}
+
+  # Download Toolchain
   echo -e "${yellow}Downloading meta-linaro...${NC}"
   git clone -b ${branch} ${url_toolchain}
+
+  popd
 }
 
 function environment
 {
   echo -e "${yellow}2. Setting up environment...${NC}"
-  echo -e "${yellow}Enter build directory name...${NC}"
-  read buildDir
-  source oe-init-build-env ${buildDir} #ToDo build directory from argument
-  # fullBuildDir=.../${buildDir}
+  # echo -e "${yellow}Enter build directory name...${NC}"
+  # read name
+  # buildDir="${name}-build"
+  buildDir="altera-build"
+  source oe-init-build-env ${buildDir}
+  fullBuildDir=$(pwd)
 }
 
 function buildConfig
@@ -113,11 +127,11 @@ function customBuild
 
 function addLayers
 {
+  cd fullBuildDir
   echo -e "${yellow}Adding layers...${NC}"
-  cd ~/poky/build #cd ${fullBuildDir}
-  bitbake-layers add-layer ../meta-altera
-  bitbake-layers add-layer ../meta-linaro/meta-linaro-toolchain
-  bitbake-layers add-layer ../meta-cyclone-custom-bsp
+  bitbake-layers add-layer ../${source_dir}/meta-altera
+  bitbake-layers add-layer ../${source_dir}/meta-linaro/meta-linaro-toolchain
+  # bitbake-layers add-layer ../meta-cyclone-custom-bsp
 }
 
 download
@@ -127,7 +141,7 @@ environment
 # customLayer
 # customMachine
 # customBuild
-# addLayers
+addLayers
 
 # read addr
 # cd ${addr}/Develop
