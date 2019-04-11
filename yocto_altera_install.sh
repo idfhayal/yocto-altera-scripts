@@ -8,21 +8,31 @@
 yellow='\E[1;33m'
 NC='\033[0m'
 
+### Parameters #############################################################
+url="git://git.yoctoproject.org/poky.git"
+url_altera="git://github.com/kraj/meta-altera.git"
+url_toolchain="git://git.linaro.org/openembedded/meta-linaro.git"
+
+### Functions #############################################################
 function download
 {
   echo -e "${yellow}1. Preparing Yocto for Altera-SoC...${NC}"
   echo -e "${yellow}Choose preferred Yocto version (rocko,sumo,thud)...${NC}"
-  read ver
-  echo -e "${yellow}Enter project directory name...${NC}"
-  read mainDir
+  git ls-remote --heads ${url}
+  echo -e "${yellow}Type branch name...${NC}"
+  read branch
+
+  # echo -e "${yellow}Enter project directory name...${NC}"
+  # read mainDir
+  mainDir="yocto-${branch}"
   # fullProjectDir=.../${mainDir}
-  echo -e "${yellow}Downloading Yocto ${ver} source...${NC}"
-  git clone -b ${ver} git://git.yoctoproject.org/poky.git ${mainDir}
+  echo -e "${yellow}Downloading Yocto ${branch} source...${NC}"
+  git clone -b ${branch} ${url} ${mainDir}
   cd ${mainDir} # fullProjectDir=.../${mainDir}
   echo -e "${yellow}Downloading meta-altera...${NC}"
-  git clone -b ${ver} git://github.com/kraj/meta-altera.git
+  git clone -b ${branch} ${url_altera}
   echo -e "${yellow}Downloading meta-linaro...${NC}"
-  git clone -b ${ver} git://git.linaro.org/openembedded/meta-linaro.git
+  git clone -b ${branch} ${url_toolchain}
 }
 
 function environment
@@ -110,8 +120,8 @@ function addLayers
   bitbake-layers add-layer ../meta-cyclone-custom-bsp
 }
 
-# download
-# environment
+download
+environment
 # buildConfig
 # patchToolchain
 # customLayer
@@ -119,9 +129,9 @@ function addLayers
 # customBuild
 # addLayers
 
-read addr
-cd ${addr}/Develop
-echo -e "${yellow}Yocto ${ver} for Altera-SoC is ready!${NC}"
+# read addr
+# cd ${addr}/Develop
+echo -e "${yellow}Yocto ${branch} for Altera-SoC is ready!${NC}"
 #echo -e "${yellow}Build U-Boot:${NC}!"
 #bitbake -k virtual/bootloader"
 #echo -e "${yellow}Build Kernel:${NC}!"
