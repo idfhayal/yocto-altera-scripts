@@ -295,7 +295,7 @@ read yn
 if [ ${yn} == "y" ]
 then
   cd ${buildDirAbs}
-  bitbake virtual/kernel -c menuconfig
+  bitbake -c menuconfig virtual/kernel
   bitbake -k virtual/kernel
 fi
 
