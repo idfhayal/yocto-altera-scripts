@@ -68,7 +68,7 @@ function bspDownload
   echo -e "${yellow}Downloading meta-linaro...${NC}"
   git clone -b ${branch} ${url_toolchain}
   
-  patchToolchain
+  # patchToolchain
 
   # BSP Dir
 }
@@ -84,6 +84,19 @@ function environment
   # read name
   # buildDir="${name}-build"
   source oe-init-build-env ${buildDir}
+}
+
+function addLayers
+{
+  cd ${buildDirAbs}
+  # Build Dir
+
+  echo -e "${yellow}Adding layers...${NC}"
+  bitbake-layers add-layer ../${bspDir}/meta-altera
+  bitbake-layers add-layer ../${bspDir}/meta-linaro/meta-linaro-toolchain
+
+  cd ${mainDirAbs}
+  #Main Dir
 }
 
 function buildConfig
@@ -116,31 +129,14 @@ function buildConfig_de0
   echo "MACHINE = "'"cyclone5"'"" >> conf/local.conf
   echo "PREFERRED_PROVIDER_virtual/kernel = "'"linux-altera-ltsi-rt"'"" >> conf/local.conf
   echo "PREFERRED_VERSION_linux-altera-ltsi-rt = "'"4.9%"'"" >> conf/local.conf
-  echo "GCCVERSION = "'"linaro-5.2"'"" >> conf/local.conf
-  echo "SDKGCCVERSION = "'"linaro-5.2"'"" >> conf/local.conf
+  echo "GCCVERSION = "'"linaro-7.2"'"" >> conf/local.conf
+  echo "SDKGCCVERSION = "'"linaro-7.2"'"" >> conf/local.conf
   echo "DEFAULTTUNE = "'"cortexa9hf-neon"'"" >> conf/local.conf
   echo "UBOOT_CONFIG = "'"de0-nano-soc"'"" >> conf/local.conf
   echo "KERNEL_DEVICETREE = "'"socfpga_cyclone5_de0_sockit.dtb"'"" >> conf/local.conf
   echo "UBOOT_EXTLINUX_FDT = "'"../socfpga_cyclone5_de0_sockit.dtb"'"" >> conf/local.conf
   echo "PACKAGE_CLASSES = "'"package_ipk"'"" >> conf/local.conf
 }
-
-
-
-
-function addLayers
-{
-  cd ${buildDirAbs}
-  # Build Dir
-
-  echo -e "${yellow}Adding layers...${NC}"
-  bitbake-layers add-layer ../${bspDir}/meta-altera
-  bitbake-layers add-layer ../${bspDir}/meta-linaro/meta-linaro-toolchain
-
-  cd ${mainDirAbs}
-  #Main Dir
-}
-
 
 
 function customMeta
@@ -183,8 +179,6 @@ function customBuildConfig
   cp -n conf/layer.conf conf/layer.conf.sample
   echo " " >> conf/layer.conf
   echo "# Dependencies" >> conf/layer.conf
-  # echo "LAYERDEPENDS_cyclone-custom-bsp = "'"meta-altera"'"" >> conf/layer.conf
-  # echo "LAYERVERSION_cyclone-custom-bsp = "'"1"'"" >> conf/layer.conf
   echo "LAYERDEPENDS_${customLayer} = "'"meta-altera"'"" >> conf/layer.conf
   echo "LAYERVERSION_${customLayer} = "'"1"'"" >> conf/layer.conf
   echo " " >> conf/layer.conf
@@ -195,8 +189,8 @@ function customBuildConfig
   echo "MACHINE = "'"'${machine}'"'"" >> conf/layer.conf
   echo "PREFERRED_PROVIDER_virtual/kernel = "'"linux-altera-ltsi-rt"'"" >> conf/layer.conf
   echo "PREFERRED_VERSION_linux-altera-ltsi-rt = "'"4.9%"'"" >> conf/layer.conf
-  echo "GCCVERSION = "'"linaro-5.2"'"" >> conf/layer.conf
-  echo "SDKGCCVERSION = "'"linaro-5.2"'"" >> conf/layer.conf
+  echo "GCCVERSION = "'"linaro-7.2"'"" >> conf/layer.conf
+  echo "SDKGCCVERSION = "'"linaro-7.2"'"" >> conf/layer.conf
   echo "DEFAULTTUNE = "'"cortexa9hf-neon"'"" >> conf/layer.conf
   
   cd ${mainDirAbs}
@@ -217,6 +211,13 @@ buildDirAbs=${mainDirAbs}/${buildDir}
 bspDirAbs=${mainDirAbs}/${bspDir}
 customLayerAbs=${bspDirAbs}/${customLayer}
 
+echo -e "${yellow}2. Reset yocto built? [y/n]${NC}"
+read yn
+if [ ${yn} == "y" ]
+then
+  reset
+fi
+
 echo -e "${yellow}2. Download Alters SoC BSP? [y/n]${NC}"
 read yn
 if [ ${yn} == "y" ]
@@ -224,13 +225,6 @@ then
   bspDownload
 fi
 
-
-echo -e "${yellow}2. Reset yocto built? [y/n]${NC}"
-read yn
-if [ ${yn} == "y" ]
-then
-  reset
-fi
 
 echo -e "${yellow}2. Init environment? [y/n]${NC}"
 read yn
