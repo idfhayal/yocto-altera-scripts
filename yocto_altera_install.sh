@@ -122,7 +122,7 @@ function buildConfig_de0
   echo "UBOOT_CONFIG = "'"de0-nano-soc"'"" >> conf/local.conf
   echo "KERNEL_DEVICETREE = "'"socfpga_cyclone5_de0_sockit.dtb"'"" >> conf/local.conf
   echo "UBOOT_EXTLINUX_FDT = "'"../socfpga_cyclone5_de0_sockit.dtb"'"" >> conf/local.conf
-  echo "PACKAGE_CLASSES = "'"package_ipk"'"" >> conf/layer.conf
+  echo "PACKAGE_CLASSES = "'"package_ipk"'"" >> conf/local.conf
 }
 
 
